@@ -24,19 +24,18 @@ CARD_WIDTH = 98
 
 class Game:
 	def __init__(self, root, hit_button, 
-		stand_button, double_button,
-		split_button, bet_up_button,
-		bet_down_button, deal_button, current_bet_label,
+		stand_button, double_button, 
+		bet_up_button, bet_down_button, 
+		deal_button, current_bet_label,
 		current_balance_label, player_score_label,
 		dealer_score_label, player_frame,
 		dealer_frame, outcome_label, 
-		DEFAULT_BALANCE):
+		DEFAULT_BALANCE, START_BET):
 
 		self.root = root
 		self.hit_button = hit_button 						#Player option to hit
 		self.stand_button = stand_button 					#Player option to stand
 		self.double_button = double_button					#Player option to double down
-		self.split_button = split_button 					#Player option to split (if valid)
 		self.bet_up_button = bet_up_button 					#Player option to increase bet by $1
 		self.bet_down_button = bet_down_button 				#Player option to decrease bet by $1
 		self.deal_button = deal_button 						#Player option to deal (start new game)
@@ -50,6 +49,8 @@ class Game:
 		self.dealer = Player(0)								#The dealer being played against (doesn't require balance)
 		self.user = Player(DEFAULT_BALANCE)					#The instance for the user
 		self.deck = None
+		self.DEFAULT_BALANCE = DEFAULT_BALANCE
+		self.START_BET = START_BET
 
 		self.deal_button.configure(command = lambda: self.start_round())
 		self.bet_up_button.configure(command = lambda: self.adjust_bet(1))
@@ -139,12 +140,13 @@ class Game:
 
 	def check_zero(self):
 		'''
-		Checks if the user balance is 0 or lower. Displays a message if true.
+		Checks if the user balance is 0 or lower. Displays a message if true and resets balance and default bet.
 		'''
 
-		if (user.balance <= 0):
-			self.player_lost = True
+		if (self.user.balance <= 0):
 			messagebox.showwarning("No Money", "You lost all your money... New game will restart with initial balance")
+			self.adjust_balance(self.DEFAULT_BALANCE)
+			self.current_bet = self.START_BET
 
 
 	def update_score_label(self):
@@ -202,7 +204,8 @@ class Game:
 
 		self.hit()
 		self.hit()
-		self.config_buttons(state='normal', buttons=[self.double_button])
+		if (self.user.balance >= self.current_bet):
+			self.config_buttons(state='normal', buttons=[self.double_button])
 		if (self.user.hand.is_bj):
 			self.end_game(winner="PLAYER")
 		else:
@@ -256,7 +259,7 @@ class Game:
 		cards until it is either at a hard 17 or a soft 18. After it checks who won and ends the game.
 		'''
 
-		buttons_disable = [self.double_button, self.hit_button, self.stand_button, self.split_button]
+		buttons_disable = [self.double_button, self.hit_button, self.stand_button]
 		self.config_buttons(buttons = buttons_disable, state = 'disabled')
 		dealers_turn = True
 		while dealers_turn:
@@ -281,7 +284,7 @@ class Game:
 		buttons_enable = [self.deal_button, self.bet_down_button, self.bet_up_button]
 		self.config_buttons(state='normal', buttons= buttons_enable)
 
-		buttons_disable = [self.hit_button, self.stand_button, self.double_button, self.split_button]
+		buttons_disable = [self.hit_button, self.stand_button, self.double_button]
 		self.config_buttons(state='disabled', buttons=buttons_disable)
 
 		if (winner == "PLAYER"):
@@ -303,6 +306,7 @@ class Game:
 
 		self.adjust_balance(self.current_bet*pay_rate)
 		self.adjust_outcome_label(msg=msg)
+		self.check_zero()
 
 	def double_down(self):
 		'''

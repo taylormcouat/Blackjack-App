@@ -89,19 +89,15 @@ class Application:
 		hit_button.place(relx=0.1, rely=0.05, relheight=0.20, relwidth=0.8)
 
 		stand_button = tk.Button(button_frame, bg='red', text='STAND', fg='white', state='disabled')
-		stand_button.place(relx= 0.1, rely=0.3, relheight=0.2, relwidth=0.8)
+		stand_button.place(relx= 0.1, rely=0.4, relheight=0.2, relwidth=0.8)
 
 		double_button = tk.Button(button_frame, bg='purple', text='DOUBLE', fg='white', state='disabled')
-		double_button.place(relx= 0.1, rely=0.55, relheight=0.2, relwidth=0.8)
-
-		split_button = tk.Button(button_frame, bg='blue', text='SPLIT', fg='white', state='disabled')
-		split_button.place(relx=0.1, rely=0.8, relheight=0.2, relwidth=0.8)
+		double_button.place(relx= 0.1, rely=0.75, relheight=0.2, relwidth=0.8)
 
 		self.game = Game(root = self.root,
 		hit_button = hit_button, 
 		stand_button = stand_button, 
-		double_button = double_button,
-		split_button = split_button, 
+		double_button = double_button, 
 		bet_up_button = bet_up_button,
 		bet_down_button = bet_down_button, 
 		deal_button = deal_button, 
@@ -112,7 +108,8 @@ class Application:
 		player_frame = player_frame,
 		dealer_frame = dealer_frame, 
 		outcome_label = outcome_label, 
-		DEFAULT_BALANCE = DEFAULT_BALANCE)
+		DEFAULT_BALANCE = DEFAULT_BALANCE,
+		START_BET = START_BET)
 
 
 
